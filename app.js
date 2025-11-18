@@ -4,7 +4,8 @@ import { sequelize } from './Utils/dbConnection.js';
 import { setupSwagger } from './swagger.js';
 import cors from 'cors';
 import fileUpload from 'express-fileupload';
-import All_Relations from './Utils/All_Realtions.js'; 
+import All_Relations from './Utils/All_Realtions.js';
+import { registerAllRoutes } from './Utils/All_Routes.js'; 
 
 
 const app = express();
@@ -12,7 +13,7 @@ const PORT = process.env.PORT;
 
 app.use(cors(
   {
-    origin: "*",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
@@ -39,6 +40,8 @@ sequelize.sync().then(() => {
 });
 
 All_Relations();
+
+registerAllRoutes(app);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

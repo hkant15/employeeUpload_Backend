@@ -7,41 +7,34 @@ dotenv.config();
 
 const authController = {};
 
-// authController.register = async (req, res) => {
-//   try {
-//     const { name, email, password, department } = req.body || {};
+authController.register = async (req, res) => {
+  try {
+    const {email,password} = req.body || {};
 
-//     if (!name || !email || !password || !department) {
-//       return res.status(400).json({ message: "All fields (name, email, password, department) are required" });
-//     }
-//     const existingUser = await User.findOne({ where: { email } });
-//     if (existingUser) {
-//       return res.status(400).json({ message: "User already exists with this email" });
-//     }
+    if (!email || !password) {
+      return res.status(400).json({ message: "All fields (email, password) are required" });
+    }
+    const existingUser = await All_Models.Admin.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: "Admin already exists with this email" });
+    }
 
-//     const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-//     const dept = await Department.findByPk(department);
-//     if (!dept) {
-//       return res.status(400).json({ message: "Department not found" });
-//     }
+    const newUser = await All_Models.Admin.create({
+      email,
+      password: hashedPassword,
+    });
 
-//     const newUser = await User.create({
-//       name,
-//       email,
-//       password: hashedPassword,
-//       department
-//     });
+    const adminSafe = { ...newUser.toJSON() };
+    delete adminSafe.password;
 
-//     const userSafe = { ...newUser.toJSON() };
-//     delete userSafe.password;
-
-//     return res.status(201).json({ message: "User registered successfully", user: userSafe });
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ message: "Internal server error" });
-//   }
-// };
+    return res.status(201).json({ message: "Admin registered successfully", admin: adminSafe });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 authController.login = async (req, res) => {
   try {
@@ -62,7 +55,7 @@ authController.login = async (req, res) => {
     }
 
 
-    const payload = { id: user.id, email: user.email, department: user.department };
+    const payload = { id: user.id, email: user.email };
 
     const accessTokenHRMS = jwt.sign(
       payload,
@@ -78,7 +71,7 @@ authController.login = async (req, res) => {
 
     res.cookie(
       'EUAT',
-      EUAT,
+      accessTokenHRMS,
       {
         httpOnly: true,
         secure: true,
@@ -89,7 +82,7 @@ authController.login = async (req, res) => {
 
     res.cookie(
       'EURT',
-      EURT,
+      refreshTokenHRMS,
       {
         httpOnly: true,
         secure: true,
@@ -103,8 +96,8 @@ authController.login = async (req, res) => {
     return res.status(200).json({
       message: 'User logged in successfully',
       user: safeUser,
-      EUAT,
-      EURT
+      EUAT: accessTokenHRMS,
+      EURT: refreshTokenHRMS
     });
   } catch (err) {
     console.error('Login error:', err);

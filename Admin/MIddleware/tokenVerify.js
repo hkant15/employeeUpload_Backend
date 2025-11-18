@@ -5,15 +5,13 @@ dotenv.config();
 
 const tokenVerify = (req, res, next) => {
   try {
-    // Try to get token from cookies first, then fallback to Authorization header
     let accessToken = req.cookies?.EUAT;
     const refreshToken = req.cookies?.EURT;
 
-    // Fallback: Check Authorization header if cookie is missing
     if (!accessToken) {
       const authHeader = req.headers?.authorization;
       if (authHeader && authHeader.startsWith('Bearer ')) {
-        accessToken = authHeader.substring(7); // Extract token after "Bearer "
+        accessToken = authHeader.substring(7);
       }
     }
 
@@ -23,12 +21,11 @@ const tokenVerify = (req, res, next) => {
 
     jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET, (err, decoded) => {
       if (!err) {
-        if (!decoded || decoded.id === undefined || decoded.email === undefined || decoded.department === undefined) {
+        if (!decoded || decoded.id === undefined || decoded.email === undefined) {
           return res.status(401).json({ error: 'Invalid Access Token payload' });
         }
         req.user = decoded;
         req.userId = decoded.id;
-        req.departmentId = Number(decoded.department);
         return next();
       }
 
@@ -48,12 +45,12 @@ const tokenVerify = (req, res, next) => {
           return res.status(401).json({ error: 'Invalid Refresh Token' });
         }
 
-        if (!rDecoded || rDecoded.id === undefined || rDecoded.email === undefined || rDecoded.department === undefined) {
+        if (!rDecoded || rDecoded.id === undefined || rDecoded.email === undefined) {
           return res.status(401).json({ error: 'Invalid Refresh Token payload' });
         }
 
         const newAccessToken = jwt.sign(
-          { id: rDecoded.id, email: rDecoded.email, department: rDecoded.department },
+          { id: rDecoded.id, email: rDecoded.email },
           process.env.JWT_ACCESS_SECRET,
           { expiresIn: '7d' }
         );
@@ -65,9 +62,8 @@ const tokenVerify = (req, res, next) => {
           maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
-        req.user = { id: rDecoded.id, email: rDecoded.email, department: rDecoded.department };
+        req.user = { id: rDecoded.id, email: rDecoded.email };
         req.userId = rDecoded.id;
-        req.departmentId = Number(rDecoded.department);
         return next();
       });
     });

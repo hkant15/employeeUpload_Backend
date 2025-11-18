@@ -12,7 +12,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /employees:
+ * /employee/getAllEmployees:
  *   get:
  *     summary: Retrieve all employees
  *     tags: [Employees]
@@ -22,21 +22,21 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.get('/', employeeController.getAllEmployees);
+router.get('/getAllEmployees', employeeController.getAllEmployees);
 
 /**
  * @swagger
- * /employees/{id}:
+ * /employee/getEmployeeById:
  *   get:
- *     summary: Retrieve a single employee
+ *     summary: Retrieve an employee by ID
  *     tags: [Employees]
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
  *           type: integer
- *         description: Employee ID
+ *         description: Employee ID to retrieve documents for
  *     responses:
  *       200:
  *         description: Employee retrieved successfully
@@ -45,47 +45,13 @@ router.get('/', employeeController.getAllEmployees);
  *       500:
  *         description: Server error
  */
-router.get('/:id', employeeController.getEmployeeById);
+router.get('/getEmployeeById', employeeController.getEmployeeById);
 
 /**
  * @swagger
- * /employees:
+ * /employee/createEmployee:
  *   post:
- *     summary: Create a new employee
- *     tags: [Employees]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - name
- *               - phoneNumber
- *               - location
- *             properties:
- *               name:
- *                 type: string
- *               phoneNumber:
- *                 type: string
- *               location:
- *                 type: string
- *               driveFolderId:
- *                 type: string
- *                 nullable: true
- *     responses:
- *       201:
- *         description: Employee created successfully
- *       500:
- *         description: Server error
- */
-router.post('/', employeeController.createEmployee);
-
-/**
- * @swagger
- * /employees/upload:
- *   post:
- *     summary: Upload a file related to an employee
+ *     summary: Create a new employee with documents
  *     tags: [Employees]
  *     requestBody:
  *       required: true
@@ -93,19 +59,112 @@ router.post('/', employeeController.createEmployee);
  *         multipart/form-data:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
+ *               - phoneNumber
  *             properties:
- *               file:
+ *               name:
  *                 type: string
- *                 format: binary
+ *               phoneNumber:
+ *                 type: string
+ *               dateOfBirth:
+ *                 type: string
+ *                 format: date
+ *               uan:
+ *                 type: string
+ *               remark:
+ *                 type: string
+ *               aadhaar:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *               pan:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *               bank:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *               additional:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
  *     responses:
- *       200:
- *         description: File uploaded successfully
- *       400:
- *         description: No file uploaded
+ *       201:
+ *         description: Employee created successfully
  *       500:
  *         description: Server error
  */
-router.post('/upload', employeeController.uploadEmployeeFile);
+router.post('/createEmployee', employeeController.createEmployee);
+
+/**
+ * @swagger
+ * /employee/updateEmployee:
+ *   put:
+ *     summary: Update employee details
+ *     tags: [Employees]
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Employee ID to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               phoneNumber:
+ *                 type: string
+ *               dateOfBirth:
+ *                 type: string
+ *                 format: date
+ *               uan:
+ *                 type: string
+ *               remark:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Employee updated successfully
+ *       404:
+ *         description: Employee not found
+ *       500:
+ *         description: Server error
+ */
+router.put('/updateEmployee', employeeController.updateEmployee);
+
+/**
+ * @swagger
+ * /employee/deleteEmployee:
+ *   delete:
+ *     summary: Delete an employee
+ *     tags: [Employees]
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Employee ID to delete   
+ *     responses:
+ *       200:
+ *         description: Employee deleted successfully
+ *       404:
+ *         description: Employee not found
+ *       500:
+ *         description: Server error
+ */
+router.delete('/deleteEmployee', employeeController.deleteEmployee);
 
 export default router;
 

@@ -1,5 +1,6 @@
 import express from 'express';
 import documentController from '../Controllers/documentController.js';
+import tokenVerify from '../../Admin/Middleware/tokenVerify.js';
 
 const router = express.Router();
 
@@ -12,9 +13,33 @@ const router = express.Router();
 
 /**
  * @swagger
- * /documents/upload:
+ * /document/getDocumentsByEmployeeId:
+ *   get:
+ *     summary: Get document by Employee ID
+ *     tags: [Documents]
+ *     parameters:
+ *       - in: query
+ *         name: employeeId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Employee ID
+ *     responses:
+ *       200:
+ *         description: Document retrieved successfully
+ *       404:
+ *         description: Document not found
+ *       500:
+ *         description: Server error
+ */
+router.get('/getDocumentsByEmployeeId', documentController.getDocumentsByEmployeeId);
+
+
+/**
+ * @swagger
+ * /document/createDocument:
  *   post:
- *     summary: Upload a document for an employee
+ *     summary: Create a new document
  *     tags: [Documents]
  *     requestBody:
  *       required: true
@@ -29,29 +54,85 @@ const router = express.Router();
  *               employeeId:
  *                 type: integer
  *                 description: Employee ID the document belongs to
- *               description:
+ *               documentType:
  *                 type: string
- *                 nullable: true
+ *                 description: Type/category of the document
  *               file:
  *                 type: string
  *                 format: binary
  *     responses:
  *       201:
- *         description: Document uploaded successfully
+ *         description: Document created successfully
  *       400:
- *         description: Validation error (missing employee or file)
+ *         description: Validation error
  *       404:
  *         description: Employee not found
  *       500:
  *         description: Server error
  */
-router.post('/upload', documentController.uploadDocument);
+router.post('/createDocument', documentController.createDocument);
 
 /**
  * @swagger
- * /documents:
+ * /document/updateDocument:
+ *   put:
+ *     summary: Update a document
+ *     tags: [Documents]
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Document ID to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               documentType:
+ *                 type: string
+ *                 description: New document type/category
+ *     responses:
+ *       200:
+ *         description: Document updated successfully
+ *       404:
+ *         description: Document not found
+ *       500:
+ *         description: Server error
+ */
+router.put('/updateDocument', documentController.updateDocument);
+
+/**
+ * @swagger
+ * /document/deleteDocument:
+ *   delete:
+ *     summary: Delete a document
+ *     tags: [Documents]
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Document ID to delete
+ *     responses:
+ *       200:
+ *         description: Document deleted successfully
+ *       404:
+ *         description: Document not found
+ *       500:
+ *         description: Server error
+ */
+router.delete('/deleteDocument', documentController.deleteDocument);
+
+/**
+ * @swagger
+ * /document/downloadDocumentsByEmployeeId:
  *   get:
- *     summary: List documents for an employee
+ *     summary: Download documents by employee ID
  *     tags: [Documents]
  *     parameters:
  *       - in: query
@@ -59,44 +140,48 @@ router.post('/upload', documentController.uploadDocument);
  *         required: true
  *         schema:
  *           type: integer
- *         description: Employee ID to filter documents
+ *         description: Employee ID to download documents for
  *     responses:
  *       200:
- *         description: Documents retrieved successfully
- *       400:
- *         description: Employee ID missing
- *       404:
- *         description: Employee not found
- *       500:
- *         description: Server error
- */
-router.get('/',
-  documentController.getEmployeeDocuments
-);
-
-/**
- * @swagger
- * /documents/{id}:
- *   get:
- *     summary: Get document details by ID
- *     tags: [Documents]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: Document ID
- *     responses:
- *       200:
- *         description: Document retrieved successfully
+ *         description: Document downloaded successfully
  *       404:
  *         description: Document not found
  *       500:
  *         description: Server error
  */
-router.get('/:id',
-  documentController.getDocumentById
-);
+router.get('/downloadDocumentsByEmployeeId', documentController.downloadDocumentsByEmployeeId);
+
+/**
+ * @swagger
+ * /document/downloadAllDocuments:
+ *   get:
+ *     summary: Download all documents for all employees (Admin only)
+ *     tags: [Documents]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: All documents downloaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                 message:
+ *                   type: string
+ *                 count:
+ *                   type: integer
+ *       401:
+ *         description: Unauthorized - Admin authentication required
+ *       500:
+ *         description: Server error
+ */
+router.get('/downloadAllDocuments', documentController.downloadAllDocuments);
 
 export default router;

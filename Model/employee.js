@@ -10,13 +10,21 @@ export const Employee = sequelize.define('Employee', {
     type: DataTypes.STRING(),
     allowNull: false,
   },
+  dateOfBirth: {
+    type: DataTypes.DATE(),
+    allowNull: true,
+  },
+  uan: {
+    type: DataTypes.STRING(),
+    allowNull: true,
+  },
+  remark: {
+    type: DataTypes.TEXT(),
+    allowNull: true,
+  },
   location: {
     type: DataTypes.STRING(),
     allowNull: false,
-  },
-  driveFolderId: {
-    type: DataTypes.STRING(),
-    allowNull: true
   }
 });
 
