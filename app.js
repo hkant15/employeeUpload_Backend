@@ -14,7 +14,9 @@ const PORT = process.env.PORT;
 
 app.use(cors(
   {
-    origin: "http://localhost:3000",
+    origin: [
+      "https://warehouse.thrivebrands.in"
+    ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
