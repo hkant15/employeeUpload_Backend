@@ -13,17 +13,20 @@ const options = {
         },
         servers: [
             {
-                url: 'http://localhost:' + process.env.PORT
+                url: 'http://localhost:' + process.env.PORT,
+                description: 'Local Development Server'
             },
             {
-                url: 'https://api.warehouse.thrivebrands.in'
+                url: 'https://api.warehouse.thrivebrands.in',
+                description: 'Production Server'
             }
         ]
     },
     apis: [
         './Admin/Routes/*.js',
         './User/Routes/*.js',
-        './Utils/All_Routes.js'
+        './Utils/All_Routes.js',
+        "./app.js"
     ]
 };
 
