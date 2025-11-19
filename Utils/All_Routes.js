@@ -8,7 +8,7 @@ export const registerAllRoutes = async (app) => {
   app.use('/document',tokenVerify, documentRoutes);
   
   const employeeRoutes = (await import('../User/Routes/EmployeeRoutes.js')).default;
-  app.use('/employee',tokenVerify, employeeRoutes);
+  app.use('/employee', employeeRoutes);
   
   /**
    * @swagger

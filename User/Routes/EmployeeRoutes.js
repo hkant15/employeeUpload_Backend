@@ -1,5 +1,6 @@
 import express from 'express';
 import employeeController from '../Controllers/EmployeeController.js';
+import tokenVerify from '../../Admin/Middleware/tokenVerify.js';
 
 const router = express.Router();
 
@@ -22,7 +23,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.get('/getAllEmployees', employeeController.getAllEmployees);
+router.get('/getAllEmployees', tokenVerify, employeeController.getAllEmployees);
 
 /**
  * @swagger
@@ -45,7 +46,7 @@ router.get('/getAllEmployees', employeeController.getAllEmployees);
  *       500:
  *         description: Server error
  */
-router.get('/getEmployeeById', employeeController.getEmployeeById);
+router.get('/getEmployeeById', tokenVerify, employeeController.getEmployeeById);
 
 /**
  * @swagger
@@ -141,7 +142,7 @@ router.post('/createEmployee', employeeController.createEmployee);
  *       500:
  *         description: Server error
  */
-router.put('/updateEmployee', employeeController.updateEmployee);
+router.put('/updateEmployee', tokenVerify, employeeController.updateEmployee);
 
 /**
  * @swagger
@@ -164,7 +165,7 @@ router.put('/updateEmployee', employeeController.updateEmployee);
  *       500:
  *         description: Server error
  */
-router.delete('/deleteEmployee', employeeController.deleteEmployee);
+router.delete('/deleteEmployee', tokenVerify, employeeController.deleteEmployee);
 
 export default router;
 
