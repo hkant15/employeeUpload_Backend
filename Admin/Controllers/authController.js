@@ -7,34 +7,34 @@ dotenv.config();
 
 const authController = {};
 
-authController.register = async (req, res) => {
-  try {
-    const {email,password} = req.body || {};
+// authController.register = async (req, res) => {
+//   try {
+//     const {email,password} = req.body || {};
 
-    if (!email || !password) {
-      return res.status(400).json({ message: "All fields (email, password) are required" });
-    }
-    const existingUser = await All_Models.Admin.findOne({ where: { email } });
-    if (existingUser) {
-      return res.status(400).json({ message: "Admin already exists with this email" });
-    }
+//     if (!email || !password) {
+//       return res.status(400).json({ message: "All fields (email, password) are required" });
+//     }
+//     const existingUser = await All_Models.Admin.findOne({ where: { email } });
+//     if (existingUser) {
+//       return res.status(400).json({ message: "Admin already exists with this email" });
+//     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+//     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await All_Models.Admin.create({
-      email,
-      password: hashedPassword,
-    });
+//     const newUser = await All_Models.Admin.create({
+//       email,
+//       password: hashedPassword,
+//     });
 
-    const adminSafe = { ...newUser.toJSON() };
-    delete adminSafe.password;
+//     const adminSafe = { ...newUser.toJSON() };
+//     delete adminSafe.password;
 
-    return res.status(201).json({ message: "Admin registered successfully", admin: adminSafe });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
+//     return res.status(201).json({ message: "Admin registered successfully", admin: adminSafe });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ message: "Internal server error" });
+//   }
+// };
 
 authController.login = async (req, res) => {
   try {

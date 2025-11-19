@@ -11,39 +11,39 @@ const router = express.Router();
  *   description: Authentication routes
  */
 
-/**
- * @swagger
- * /auth/register:
- *   post:
- *     summary: Register as an admin
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:    
- *           schema:
- *             type: object
- *             required:
- *               - name
- *               - email
- *               - password
- *               - department
- *             properties:
- *               email:
- *                 type: string
- *                 description: Email of the admin
- *               password:
- *                 type: string
- *                 description: Password of the admin
- *     responses:
- *       200:
- *         description: Admin registered successfully
- *       400:
- *         description: Validation error
- *       500:
- *         description: Server error
- */
-router.post('/register', authController.register);
+// /**
+//  * @swagger
+//  * /auth/register:
+//  *   post:
+//  *     summary: Register as an admin
+//  *     tags: [Auth]
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:    
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - name
+//  *               - email
+//  *               - password
+//  *               - department
+//  *             properties:
+//  *               email:
+//  *                 type: string
+//  *                 description: Email of the admin
+//  *               password:
+//  *                 type: string
+//  *                 description: Password of the admin
+//  *     responses:
+//  *       200:
+//  *         description: Admin registered successfully
+//  *       400:
+//  *         description: Validation error
+//  *       500:
+//  *         description: Server error
+//  */
+// router.post('/register', authController.register);
 
 /**
  * @swagger
