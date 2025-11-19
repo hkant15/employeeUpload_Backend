@@ -1,12 +1,14 @@
+import tokenVerify from '../Admin/Middleware/tokenVerify.js';
+
 export const registerAllRoutes = async (app) => {
   const authRoutes = (await import('../Admin/Routes/authRoute.js')).default;
   app.use('/auth', authRoutes);
   
   const documentRoutes = (await import('../User/Routes/documentRoutes.js')).default;
-  app.use('/document', documentRoutes);
+  app.use('/document',tokenVerify, documentRoutes);
   
   const employeeRoutes = (await import('../User/Routes/EmployeeRoutes.js')).default;
-  app.use('/employee', employeeRoutes);
+  app.use('/employee',tokenVerify, employeeRoutes);
   
   /**
    * @swagger

@@ -5,7 +5,8 @@ import { setupSwagger } from './swagger.js';
 import cors from 'cors';
 import fileUpload from 'express-fileupload';
 import All_Relations from './Utils/All_Realtions.js';
-import { registerAllRoutes } from './Utils/All_Routes.js'; 
+import { registerAllRoutes } from './Utils/All_Routes.js';
+import cookieParser from 'cookie-parser';
 
 
 const app = express();
@@ -20,6 +21,7 @@ app.use(cors(
   }
 ));
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(fileUpload({

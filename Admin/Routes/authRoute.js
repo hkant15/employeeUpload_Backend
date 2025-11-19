@@ -1,5 +1,6 @@
 import express from 'express';
 import authController from '../Controllers/authController.js';
+import tokenVerify from '../Middleware/tokenVerify.js';
 
 const router = express.Router();
 
@@ -88,6 +89,6 @@ router.post('/login', authController.login);
  *       500:
  *         description: Server error
  */
-router.post('/logout', authController.logout);
+router.post('/logout',tokenVerify, authController.logout);
 
 export default router;
