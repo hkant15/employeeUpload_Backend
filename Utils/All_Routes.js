@@ -1,4 +1,4 @@
-import tokenVerify from '../Admin/Middleware/tokenVerify.js';
+import tokenVerify from "../Admin/Middleware/tokenVerify.js";
 
 export const registerAllRoutes = async (app) => {
   const authRoutes = (await import('../Admin/Routes/authRoute.js')).default;
