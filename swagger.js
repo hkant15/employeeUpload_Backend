@@ -14,6 +14,9 @@ const options = {
         servers: [
             {
                 url: 'http://localhost:' + process.env.PORT
+            },
+            {
+                url: 'https://api.warehouse.thrivebrands.in'
             }
         ]
     },
