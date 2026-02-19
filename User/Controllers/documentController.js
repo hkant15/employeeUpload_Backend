@@ -223,6 +223,41 @@ documentController.downloadAllDocuments = async (req, res) => {
       });
     }
 
+    if (req.query.format === 'zip') {
+      const zipFileName = `all-documents.zip`;
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', `attachment; filename="${zipFileName}"`);
+
+      const archive = archiver('zip', { zlib: { level: 9 } });
+      archive.on('error', (err) => {
+        console.error('Archiver error:', err);
+        if (!res.headersSent) res.status(500).json({ success: false, message: 'Error creating zip', error: err.message });
+        else res.end();
+      });
+      archive.pipe(res);
+
+      const usedNames = new Set();
+      for (const doc of documents) {
+        const baseName = doc.originalFileName || doc.fileName || `document-${doc.id}`;
+        const entryName = usedNames.has(baseName)
+          ? `${doc.id}_${baseName}`
+          : baseName;
+        usedNames.add(baseName);
+
+        if (!doc.azureBlobName) {
+          continue;
+        }
+
+        const blockBlobClient = containerClient.getBlockBlobClient(doc.azureBlobName);
+        const downloadResponse = await blockBlobClient.download();
+        const stream = downloadResponse.readableStreamBody ?? Readable.from([]);
+        archive.append(stream, { name: entryName });
+      }
+
+      await archive.finalize();
+      return;
+    }
+
     return res.status(200).json({
       success: true,
       data: documents,
@@ -272,7 +307,7 @@ documentController.downloadDocumentsByEmployeeId = async (req, res) => {
     }
 
     if (req.query.format === 'zip') {
-      const zipFileName = `employee-${employeeId}-documents.zip`;
+      const zipFileName = `employee-${employee.name}-documents.zip`;
       res.setHeader('Content-Type', 'application/zip');
       res.setHeader('Content-Disposition', `attachment; filename="${zipFileName}"`);
 
