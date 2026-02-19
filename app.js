@@ -37,11 +37,11 @@ app.get('/',(req,res)=>{
 
 setupSwagger(app);
 
-sequelize.sync().then(() => {
-	console.log('Database & tables created!');
-}).catch((error) => {
-	console.error('Unable to create tables, error:', error);
-});
+// sequelize.sync().then(() => {
+// 	console.log('Database & tables created!');
+// }).catch((error) => {
+// 	console.error('Unable to create tables, error:', error);
+// });
 
 All_Relations();
 

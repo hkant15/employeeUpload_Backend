@@ -141,6 +141,14 @@ router.delete('/deleteDocument', documentController.deleteDocument);
  *         schema:
  *           type: integer
  *         description: Employee ID to download documents for
+ *       - in: query
+ *         name: format
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [zip]
+ *         description: Format to download documents in (zip)
+ *         default: zip
  *     responses:
  *       200:
  *         description: Document downloaded successfully

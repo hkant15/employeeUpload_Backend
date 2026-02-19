@@ -1,6 +1,9 @@
+import archiver from 'archiver';
+import { Readable } from 'stream';
 import { Employee } from '../../Model/employee.js';
 import { Document } from '../../Model/document.js';
 import { All_Models } from '../../Utils/All_Models.js';
+import { containerClient } from '../../Utils/azureBlobConnection.js';
 import blobService from '../../Utils/blobService.js';
 
 const documentController = {};
@@ -268,6 +271,35 @@ documentController.downloadDocumentsByEmployeeId = async (req, res) => {
       });
     }
 
+    if (req.query.format === 'zip') {
+      const zipFileName = `employee-${employeeId}-documents.zip`;
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', `attachment; filename="${zipFileName}"`);
+
+      const archive = archiver('zip', { zlib: { level: 9 } });
+      archive.on('error', (err) => {
+        console.error('Archiver error:', err);
+        if (!res.headersSent) res.status(500).json({ success: false, message: 'Error creating zip', error: err.message });
+        else res.end();
+      });
+      archive.pipe(res);
+
+      const usedNames = new Set();
+      for (const doc of documents) {
+        const entryName = usedNames.has(doc.originalFileName)
+          ? `${doc.id}_${doc.originalFileName}`
+          : doc.originalFileName;
+        usedNames.add(doc.originalFileName);
+
+        const blockBlobClient = containerClient.getBlockBlobClient(doc.azureBlobName);
+        const downloadResponse = await blockBlobClient.download();
+        const stream = downloadResponse.readableStreamBody ?? Readable.from([]);
+        archive.append(stream, { name: entryName });
+      }
+      await archive.finalize();
+      return;
+    }
+
     const documentsWithUrls = documents.map(doc => ({
       documentId: doc.id,
       fileName: doc.originalFileName,
@@ -279,7 +311,7 @@ documentController.downloadDocumentsByEmployeeId = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: documentsWithUrls,
+      data: documentsWithUrls, 
       message: 'Documents retrieved successfully',
       count: documents.length
     });
